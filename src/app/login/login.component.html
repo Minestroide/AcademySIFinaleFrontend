@@ -1,0 +1,33 @@
+<div class="container d-flex justify-content-center p-5">
+  <form style="max-width: 300px; flex: 1;" (submit)="onSubmit($event)" >
+    <h2>Login</h2>
+    <p *ngIf="!!this.username.value">Ciao, {{this.username.value}}!</p>
+    <div class="form-group">
+      <label for="usernameInput">Nome utente / Email</label>
+      <input autocomplete="email" class="form-control" [ngClass]="error ? 'is-invalid' : ''" id="usernameInput" placeholder="Inserisci qui il tuo username" [formControl]="username">
+      <div id="usernameInputFeedback" class="invalid-feedback">
+        Invalid credentials.
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="passwordInput">Password</label>
+      <input autocomplete="password" type="password" id="passwordInput" class="form-control" [ngClass]="error ? 'is-invalid' : ''" placeholder="Inserisci qui la tua password" [formControl]="password">
+      <div id="passwordInputFeedback" class="invalid-feedback">
+        Invalid credentials.
+      </div>
+    </div>
+    <div *ngIf="enableTwoFactorField" class="form-group">
+      <label for="codeInput">Codice di autenticazione a due fattori</label>
+      <input autocomplete="twoFactorCode" type="text" id="codeInput" class="form-control" [ngClass]="error ? 'is-invalid' : ''" placeholder="Inserisci qui la tua password" [formControl]="twoFactorCode">
+      <div id="codeInputFeedback" class="invalid-feedback">
+        Invalid credentials.
+      </div>
+    </div>
+    <span>Password dimenticata? <a [routerLink]="'/passwordreset'">Clicca qui</a></span><br><br>
+    <span>Non hai un account? <a [routerLink]="'/register'">Registrati qui</a></span>
+    <div class="d-flex flex-row-reverse gap-1 mt-1">
+      <button [disabled]="!this.username.value || !this.password.value" type="submit" class="btn btn-primary">Accedi</button>
+      <button [routerLink]="'/'" type="button" class="btn btn-secondary">Annulla</button>
+    </div>
+  </form>
+</div>

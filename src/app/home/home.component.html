@@ -1,0 +1,17 @@
+<div class="container mt-1">
+  <h1>Home</h1>
+  <form (submit)="this.onSubmit($event)">
+    <div class="d-flex flex-row gap-1 align-items-center justify-content-center w-100">
+      <div class="w-100" class="form-group w-100">
+        <input [formControl]="this.city" type="text" class="form-control w-100" id="city" aria-describedby="city" placeholder="Città">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+  <div class="d-flex justify-content-center align-items-center w-100"></div>
+  <p>Città: {{geocodings[0].name}}</p>
+  <p>Temperatura: {{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
+  <p>Temperatura max: {{forecast?.daily?.temperature2m_max?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
+  <p>Temperatura min: {{forecast?.daily?.temperature2m_min?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
+  <p>Wind speed: {{forecast?.hourly?.wind_speed10m?.at(0)}}{{forecast?.hourly_units?.wind_speed10m?.at(0)}}</p>
+</div>

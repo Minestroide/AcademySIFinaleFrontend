@@ -1,0 +1,114 @@
+<div *ngIf="!user" class="container">
+  <h1>Non sei autenticato.</h1>
+</div>
+
+<div *ngIf="user" class="container">
+  <h1>Ciao {{user?.name}}!</h1>
+  <p>Qui potrai gestire le impostazioni del tuo account.</p>
+
+  <form (submit)="this.onSubmit($event)" class="d-flex flex-column gap-2">
+    <h2>Cambia username o email</h2>
+    <div>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#usernameEmailChangeModal">
+      Inizia procedura
+    </button>
+    </div>
+    <div class="modal fade" id="usernameEmailChangeModal" tabindex="-1" role="dialog" aria-labelledby="usernameEmailChangeModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="usernameEmailChangeModalLabel">Cambia username o email</h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="emailInput">Email address</label>
+              <input [formControl]="newEmail" type="email" class="form-control" id="emailInput" placeholder="Nuova email (lascia vuoto per non modificare)">
+            </div>
+            <div class="form-group">
+              <label for="usernameInput">Username</label>
+              <input [formControl]="newUsername" type="email" class="form-control" id="usernameInput" placeholder="Nuovo nome utente (lascia vuoto per non modificare)">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            <button type="submit" class="btn btn-primary">Salva</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+  <br>
+  <form (submit)="this.onSubmitNewPassword($event)" class="d-flex flex-column gap-2">
+    <h2>Cambia password</h2>
+    <div>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#passwordChangeModal">
+        Inizia procedura
+      </button>
+    </div>
+    <div class="modal fade" id="passwordChangeModal" tabindex="-1" role="dialog" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="passwordChangeModalLabel">Cambia username o email</h5>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="oldPasswordInput">Vecchia password</label>
+              <input [formControl]="oldPassword" type="password" class="form-control" id="oldPasswordInput" placeholder="Vecchia password">
+            </div>
+            <div class="form-group">
+              <label for="newPasswordInput">Nuova password</label>
+              <input [formControl]="newPassword" type="password" class="form-control" id="newPasswordInput" placeholder="Nuova password">
+            </div>
+            <div class="form-group">
+              <label for="confirmPasswordInput">Conferma password</label>
+              <input [formControl]="confirmPassword" type="password" class="form-control" id="confirmPasswordInput" placeholder="Conferma password">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+            <button type="submit" class="btn btn-primary">Cambia password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form><br>
+  <h2 *ngIf="!user?.twoFactorEnabled">Autenticazione a due fattori</h2>
+  <div *ngIf="!user?.twoFactorEnabled" class="modal fade" id="2faModal" tabindex="-1" role="dialog" aria-labelledby="2faModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="2faModalLabel">Cambia username o email</h5>
+        </div>
+        <div class="modal-body">
+          <div class="d-flex flex-column justify-content-center align-items-center">
+            <qr-code *ngIf="twoFactorSecret" [value]="twoFactorSecret?.uri"
+                     size="300"
+                     errorCorrectionLevel="M" />
+            <p *ngIf="twoFactorSecret">{{twoFactorSecret?.secret}}</p>
+          </div>
+          <div class="form-group">
+            <label for="codeInput">Codice di autenticazione a due fattori</label>
+            <input [formControl]="twoFactorCode" type="text" class="form-control" id="codeInput" placeholder="Codice di autenticazione a due fattori">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button data-bs-dismiss="modal" (click)="twoFactorEnable($event)" type="button" class="btn btn-primary">Attiva 2FA</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="!user?.twoFactorEnabled">
+    <button data-bs-target="#2faModal" data-bs-toggle="modal" (click)="qrCodeRequest($event)" type="button" class="btn btn-primary">
+      Inizia procedura
+    </button>
+  </div>
+  <h2 *ngIf="user?.twoFactorEnabled">Autenticazione a due fattori attiva</h2>
+  <div *ngIf="user?.twoFactorEnabled">
+    <input [formControl]="twoFactorCode" type="text" class="form-control" id="codeDisableInput" placeholder="Codice di autenticazione a due fattori">
+    <button data-bs-target="#2faModal" data-bs-toggle="modal" (click)="twoFactorDisable($event)" type="button" class="btn btn-primary">
+      Disattiva
+    </button>
+  </div>
+</div>
