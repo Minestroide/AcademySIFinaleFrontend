@@ -7,6 +7,7 @@ export interface IForecastData {
   temperature2m_max: number[],
   temperature2m_min: number[],
   temperature2m: number[],
+  weather_code: number[],
   wind_speed10m: number[],
 }
 
@@ -47,6 +48,14 @@ export class ForecastService {
 
   clearCache() {
     this.forecastObservable = undefined;
+  }
+
+  saveForecast(forecast: IForecast): Observable<void> {
+    return this.httpClient.post<void>('http://localhost:8080/api/forecast', forecast, {
+      headers: {
+        "Authorization": `Bearer ${this.token}`
+      }
+    }).pipe(share());
   }
 
   getForecast(latitude: number, longitude: number): Observable<IForecast> {

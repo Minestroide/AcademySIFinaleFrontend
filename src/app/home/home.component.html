@@ -8,10 +8,42 @@
       <button type="submit" class="btn btn-primary">Submit</button>
     </div>
   </form>
-  <div class="d-flex justify-content-center align-items-center w-100"></div>
-  <p>Città: {{geocodings[0].name}}</p>
-  <p>Temperatura: {{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
-  <p>Temperatura max: {{forecast?.daily?.temperature2m_max?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
-  <p>Temperatura min: {{forecast?.daily?.temperature2m_min?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
-  <p>Wind speed: {{forecast?.hourly?.wind_speed10m?.at(0)}}{{forecast?.hourly_units?.wind_speed10m?.at(0)}}</p>
+  <br>
+  <div *ngIf="loading" class="container">
+    <div class="d-flex justify-content-center align-items-center flex-column text-center">
+      <div class="spinner-border text-center" role="status"></div>
+      <p class="text-center">Caricamento in corso...</p>
+    </div>
+  </div>
+  <h3 class="d-flex w-100 justify-content-center align-items-center" *ngIf="!this.forecast && !this.loading">Città non trovata.</h3>
+  <div *ngIf="this.forecast && !this.loading" class="d-flex flex-column justify-content-center align-items-center w-100">
+    <h2>{{geocodings[0].name}}</h2><br />
+    <h3>{{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</h3>
+    <h4>{{this.weahterCodeToString()}}</h4>
+
+    <div class="d-flex flex-row flex-wrap gap-2 justify-content-center align-items-center">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">Temperatura massima</h5>
+          <p class="card-text">{{forecast?.daily?.temperature2m_max?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
+        </div>
+      </div>
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">Temperatura minima</h5>
+          <p class="card-text">{{forecast?.daily?.temperature2m_min?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</p>
+        </div>
+      </div>
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title">Velocità vento (10m)</h5>
+          <p class="card-text">{{forecast?.hourly?.wind_speed10m?.at(0)}}{{forecast?.hourly_units?.wind_speed10m?.at(0)}}</p>
+        </div>
+      </div>
+    </div>
+
+    <br />
+    <button (click)="this.sendToDb($event)" type="button" class="btn btn-primary">Salva</button>
+
+  </div>
 </div>
