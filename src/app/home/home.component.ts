@@ -31,6 +31,7 @@ export class HomeComponent implements OnInit{
 
   user: IUser | undefined = undefined;
   geocodings: IGeocoding[] = [];
+  geocoding: IGeocoding | undefined = undefined;
   forecast: IForecast | undefined = undefined;
 
   loading: boolean = false;
@@ -124,9 +125,10 @@ export class HomeComponent implements OnInit{
   }
 
   sendToDb($event: MouseEvent) {
-    this.forecastService.saveForecast(this.forecast as IForecast, this.geocodings[0].name).subscribe({
+    if(!this.geocoding) return;
+
+    this.forecastService.saveForecast(this.forecast as IForecast, this.geocoding?.name).subscribe({
       next: () => {
-        alert('Forecast saved to database');
         this.forecastService.getMyForecasts().subscribe((forecasts) => {
           this.myForecasts = forecasts;
         });
@@ -141,10 +143,14 @@ export class HomeComponent implements OnInit{
     if(!id) return;
 
     this.forecastService.deleteForecast(id).subscribe(() => {
-      alert("Forecast deleted");
       this.forecastService.getMyForecasts().subscribe((forecasts) => {
         this.myForecasts = forecasts;
       });
     })
+  }
+
+  chooseGeocoding($event: MouseEvent, geocoding: IGeocoding) {
+    this.geocoding = geocoding;
+    this.geocodings = [];
   }
 }

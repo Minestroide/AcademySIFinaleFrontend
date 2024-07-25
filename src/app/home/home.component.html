@@ -9,6 +9,29 @@
       <button type="submit" class="btn btn-primary">Submit</button>
     </div>
   </form>
+
+  <table class="table" *ngIf="this.geocodings.length > 0">
+    <thead>
+    <tr>
+      <th scope="col">Paese</th>
+      <th scope="col">Città</th>
+      <th scope="col">Latitudine</th>
+      <th scope="col">Longitudine</th>
+      <th scope="col">Altitudine</th>
+      <th class="text-end" scope="col">Azioni</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let geocoding of geocodings">
+      <td>{{geocoding?.country}} ({{geocoding?.country_code}})</td>
+      <td>{{geocoding?.name}}</td>
+      <td>{{geocoding?.latitude}}</td>
+      <td>{{geocoding?.longitude}}</td>
+      <td>{{geocoding?.elevation}}</td>
+      <td class="text-end"><button (click)="this.chooseGeocoding($event, geocoding)" type="button" class="btn btn-primary">Usa questa città</button></td>
+    </tr>
+    </tbody>
+  </table>
   <br>
   <div *ngIf="loading" class="container">
     <div class="d-flex justify-content-center align-items-center flex-column text-center">
@@ -16,9 +39,10 @@
       <p class="text-center">Caricamento in corso...</p>
     </div>
   </div>
-  <h3 class="d-flex w-100 justify-content-center align-items-center" *ngIf="!this.forecast && !this.loading && this.user">Città non trovata.</h3>
-  <div *ngIf="this.forecast && !this.loading && this.user" class="d-flex flex-column justify-content-center align-items-center w-100">
-    <h2>{{geocodings[0].name}}</h2><br />
+  <h3 class="d-flex w-100 justify-content-center align-items-center" *ngIf="!this.forecast && !this.loading && this.user && this.geocoding">Città non trovata.</h3>
+  <div *ngIf="this.forecast && !this.loading && this.user && this.geocoding" class="d-flex flex-column justify-content-center align-items-center w-100">
+    <h2 style="margin: 0;">{{geocoding?.name}}</h2><br />
+    <span style="font-size: 13px; margin: 0;">{{geocoding?.country}} ({{geocoding?.country_code}})</span><br />
     <h3>{{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</h3>
     <h4>{{this.weahterCodeToString()}}</h4>
 
@@ -57,9 +81,10 @@
       <th scope="col">Città</th>
       <th scope="col">Latitudine</th>
       <th scope="col">Longitudine</th>
+      <th scope="col">Temperatura</th>
       <th scope="col">Temperatura minima</th>
       <th scope="col">Temperatura massima</th>
-      <th scope="col">Azioni</th>
+      <th scope="col" class="text-end">Azioni</th>
     </tr>
     </thead>
     <tbody>
@@ -68,9 +93,10 @@
       <td>{{forecast?.city}}</td>
       <td>{{forecast?.latitude}}</td>
       <td>{{forecast?.longitude}}</td>
-      <td>{{forecast?.daily?.temperature2m_min?.at(0)}}</td>
-      <td>{{forecast?.daily?.temperature2m_max?.at(0)}}</td>
-      <button (click)="this.onForecastDelete($event, forecast?.id)" type="button" class="btn btn-danger">Elimina</button>
+      <td>{{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</td>
+      <td>{{forecast?.daily?.temperature2m_min?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</td>
+      <td>{{forecast?.daily?.temperature2m_max?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</td>
+      <td class="text-end"><button (click)="this.onForecastDelete($event, forecast?.id)" type="button" class="btn btn-danger">Elimina</button></td>
     </tr>
     </tbody>
   </table>

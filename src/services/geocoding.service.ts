@@ -8,6 +8,8 @@ export interface IGeocoding {
   name: string,
   latitude: number,
   longitude: number,
+  country: string,
+  country_code: string,
   elevation: number
 }
 
