@@ -19,12 +19,13 @@ import {FormControl, ReactiveFormsModule} from "@angular/forms";
   styleUrl: './home.component.scss'
 })
 export class HomeComponent implements OnInit{
-  images = [944, 1011, 984].map((n) => `https://picsum.photos/id/${n}/900/500`);
 
   private router: Router;
   private geocodingService: GeocodingService;
   private forecastService: ForecastService;
   private userService: UserService;
+
+  myForecasts: IForecast[] = [];
 
   private requestTimeout: any = undefined;
 
@@ -46,6 +47,15 @@ export class HomeComponent implements OnInit{
   ngOnInit() {
     this.userService.getUsersMe().subscribe((user) => {
       this.user = user;
+
+      console.log(user);
+
+      if(!user) return;
+
+      this.forecastService.getMyForecasts().subscribe((forecasts) => {
+        console.log(forecasts);
+        this.myForecasts = forecasts;
+      });
     });
   }
 
@@ -92,6 +102,7 @@ export class HomeComponent implements OnInit{
     console.log(this.city.value);
 
     this.loading = true;
+
     this.geocodingService.searchGeocodings(this.city.value as string).subscribe((geocodings) => {
       this.geocodings = geocodings;
 
@@ -113,13 +124,27 @@ export class HomeComponent implements OnInit{
   }
 
   sendToDb($event: MouseEvent) {
-    this.forecastService.saveForecast(this.forecast as IForecast).subscribe({
+    this.forecastService.saveForecast(this.forecast as IForecast, this.geocodings[0].name).subscribe({
       next: () => {
         alert('Forecast saved to database');
+        this.forecastService.getMyForecasts().subscribe((forecasts) => {
+          this.myForecasts = forecasts;
+        });
       },
       error: (error) => {
         alert('Failed to save forecast to database');
       }
     });
+  }
+
+  onForecastDelete($event: MouseEvent, id: string | undefined) {
+    if(!id) return;
+
+    this.forecastService.deleteForecast(id).subscribe(() => {
+      alert("Forecast deleted");
+      this.forecastService.getMyForecasts().subscribe((forecasts) => {
+        this.myForecasts = forecasts;
+      });
+    })
   }
 }

@@ -1,6 +1,7 @@
 <div class="container mt-1">
-  <h1>Home</h1>
-  <form (submit)="this.onSubmit($event)">
+  <h1 *ngIf="user">Home</h1>
+  <h2 *ngIf="!user">Autenticati per continuare.</h2>
+  <form *ngIf="user" (submit)="this.onSubmit($event)">
     <div class="d-flex flex-row gap-1 align-items-center justify-content-center w-100">
       <div class="w-100" class="form-group w-100">
         <input [formControl]="this.city" type="text" class="form-control w-100" id="city" aria-describedby="city" placeholder="Città">
@@ -15,8 +16,8 @@
       <p class="text-center">Caricamento in corso...</p>
     </div>
   </div>
-  <h3 class="d-flex w-100 justify-content-center align-items-center" *ngIf="!this.forecast && !this.loading">Città non trovata.</h3>
-  <div *ngIf="this.forecast && !this.loading" class="d-flex flex-column justify-content-center align-items-center w-100">
+  <h3 class="d-flex w-100 justify-content-center align-items-center" *ngIf="!this.forecast && !this.loading && this.user">Città non trovata.</h3>
+  <div *ngIf="this.forecast && !this.loading && this.user" class="d-flex flex-column justify-content-center align-items-center w-100">
     <h2>{{geocodings[0].name}}</h2><br />
     <h3>{{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</h3>
     <h4>{{this.weahterCodeToString()}}</h4>
@@ -46,4 +47,31 @@
     <button (click)="this.sendToDb($event)" type="button" class="btn btn-primary">Salva</button>
 
   </div>
+
+  <h2 *ngIf="user">Le tue previsioni salvate</h2>
+
+  <table class="table" *ngIf="user">
+    <thead>
+    <tr>
+      <th scope="col">Data</th>
+      <th scope="col">Città</th>
+      <th scope="col">Latitudine</th>
+      <th scope="col">Longitudine</th>
+      <th scope="col">Temperatura minima</th>
+      <th scope="col">Temperatura massima</th>
+      <th scope="col">Azioni</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let forecast of myForecasts">
+      <th scope="row">{{forecast?.daily?.time?.at(0)}}</th>
+      <td>{{forecast?.city}}</td>
+      <td>{{forecast?.latitude}}</td>
+      <td>{{forecast?.longitude}}</td>
+      <td>{{forecast?.daily?.temperature2m_min?.at(0)}}</td>
+      <td>{{forecast?.daily?.temperature2m_max?.at(0)}}</td>
+      <button (click)="this.onForecastDelete($event, forecast?.id)" type="button" class="btn btn-danger">Elimina</button>
+    </tr>
+    </tbody>
+  </table>
 </div>

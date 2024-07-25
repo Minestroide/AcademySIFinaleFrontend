@@ -17,7 +17,9 @@ export interface IForecastUnits {
 }
 
 export interface IForecast {
+  id?: string,
   latitude: number,
+  city?: string,
   longitude: number,
   elevation: number,
   timezone: string,
@@ -36,6 +38,7 @@ export class ForecastService {
   private token: string;
   private httpClient: HttpClient;
   private forecastObservable: Observable<IForecast> | undefined = undefined;
+  private myForecastsObservable: Observable<IForecast[]> | undefined = undefined;
 
   constructor(httpClient: HttpClient) {
     this.token = window.localStorage.getItem('token') as string;
@@ -50,8 +53,11 @@ export class ForecastService {
     this.forecastObservable = undefined;
   }
 
-  saveForecast(forecast: IForecast): Observable<void> {
+  saveForecast(forecast: IForecast, cityName: string): Observable<void> {
     return this.httpClient.post<void>('http://localhost:8080/api/forecast', forecast, {
+      params: {
+        city: cityName
+      },
       headers: {
         "Authorization": `Bearer ${this.token}`
       }
@@ -75,5 +81,33 @@ export class ForecastService {
     });
 
     return this.forecastObservable;
+  }
+
+  getMyForecasts(): Observable<IForecast[]> {
+    if(this.myForecastsObservable) return this.myForecastsObservable;
+
+    console.log("Getting my forecasts...");
+
+    let config = {
+      headers: {
+        'Authorization': `Bearer ${this.token}`
+      }
+    }
+
+    this.myForecastsObservable = this.httpClient.get<IForecast[]>(`http://localhost:8080/api/forecast/@me`, config).pipe(share());
+
+    this.myForecastsObservable.subscribe((forecast) => {
+      this.myForecastsObservable = undefined;
+    });
+
+    return this.myForecastsObservable;
+  }
+
+  deleteForecast(id: string): Observable<void> {
+    return this.httpClient.delete<void>(`http://localhost:8080/api/forecast/${id}`, {
+      headers: {
+        "Authorization": `Bearer ${this.token}`
+      }
+    }).pipe(share());
   }
 }
