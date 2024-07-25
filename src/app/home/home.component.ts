@@ -64,7 +64,10 @@ export class HomeComponent implements OnInit{
 
   public city = new FormControl('');
 
-  weahterCodeToString() {
+  weahterCodeToString(weatherCode: number | undefined) {
+    console.log(weatherCode);
+    if(weatherCode === undefined) return "Unknown";
+
     return {
       0: 'Clear sky',
       1: 'Nearly clear sky',
@@ -94,7 +97,7 @@ export class HomeComponent implements OnInit{
       72: 'Heavy rain',
       80: 'Thunder',
       95: 'Fog',
-    }[this.forecast?.daily?.weather_code?.at(0) as number]
+    }[weatherCode as number]
   }
 
   onSubmit($event: SubmitEvent) {

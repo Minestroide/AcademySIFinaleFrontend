@@ -44,7 +44,7 @@
     <h2 style="margin: 0;">{{geocoding?.name}}</h2><br />
     <span style="font-size: 13px; margin: 0;">{{geocoding?.country}} ({{geocoding?.country_code}})</span><br />
     <h3>{{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</h3>
-    <h4>{{this.weahterCodeToString()}}</h4>
+    <h4>{{this.weahterCodeToString(this.forecast?.daily?.weather_code?.at(0))}}</h4>
 
     <div class="d-flex flex-row flex-wrap gap-2 justify-content-center align-items-center">
       <div class="card" style="width: 18rem;">
@@ -79,6 +79,7 @@
     <tr>
       <th scope="col">Data</th>
       <th scope="col">Città</th>
+      <th scope="col">Condizioni metereologiche</th>
       <th scope="col">Latitudine</th>
       <th scope="col">Longitudine</th>
       <th scope="col">Temperatura</th>
@@ -91,6 +92,7 @@
     <tr *ngFor="let forecast of myForecasts">
       <th scope="row">{{forecast?.daily?.time?.at(0)}}</th>
       <td>{{forecast?.city}}</td>
+      <td>{{this.weahterCodeToString(forecast?.daily?.weather_code?.at(0))}}</td>
       <td>{{forecast?.latitude}}</td>
       <td>{{forecast?.longitude}}</td>
       <td>{{forecast?.minutely15?.temperature2m?.at(0)}}{{forecast?.minutely15_units?.temperature2m}}</td>
